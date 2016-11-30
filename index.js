@@ -14395,10 +14395,11 @@
 														'dead',
 														_elm_lang$core$Json_Decode$bool,
 														false,
-														A3(
-															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+														A4(
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
 															'by',
 															_elm_lang$core$Json_Decode$string,
+															'Deleted',
 															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_mthadley$thenews$Item$Item)))))))))))))));
 
 	var _mthadley$thenews$RemoteData$withDefault = F2(
