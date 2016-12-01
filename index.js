@@ -11340,7 +11340,20 @@
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p15.by),
+							_0: A2(
+								_elm_lang$html$Html$a,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$href(
+										_mthadley$thenews$Router$reverse(
+											_mthadley$thenews$Router$ViewUser(_p15.by))),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(_p15.by),
+									_1: {ctor: '[]'}
+								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -11640,7 +11653,7 @@
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('Recent Submissions'),
+						_0: _elm_lang$html$Html$text('▬ Recent Submissions'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
