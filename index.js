@@ -10268,6 +10268,23 @@
 		return A2(_evancz$url_parser$UrlParser$customParam, name, _evancz$url_parser$UrlParser$intParamHelp);
 	};
 
+	var _mthadley$thenews$Util$viewHtmlContent = function (content) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('html-content'),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html_Attributes$property,
+						'innerHTML',
+						_elm_lang$core$Json_Encode$string(content)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'});
+	};
 	var _mthadley$thenews$Util$pluralize = F3(
 		function (singular, plural, count) {
 			return (_elm_lang$core$Native_Utils.cmp(count, 1) > 0) ? plural : singular;
@@ -10283,28 +10300,6 @@
 	var _mthadley$thenews$Util$maybeToString = _elm_lang$core$Maybe$map(_elm_lang$core$Basics$toString);
 	var _mthadley$thenews$Util$jsLink = _elm_lang$html$Html_Attributes$href('javascript:;');
 	var _mthadley$thenews$Util$empty = _elm_lang$html$Html$text('');
-	var _mthadley$thenews$Util$viewHtmlContent = function (content) {
-		var _p0 = content;
-		if (_p0.ctor === 'Just') {
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('html-content'),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html_Attributes$property,
-							'innerHTML',
-							_elm_lang$core$Json_Encode$string(_p0._0)),
-						_1: {ctor: '[]'}
-					}
-				},
-				{ctor: '[]'});
-		} else {
-			return _mthadley$thenews$Util$empty;
-		}
-	};
 
 	var _mthadley$thenews$Item$Item = function (a) {
 		return function (b) {
@@ -10496,6 +10491,37 @@
 			}
 		});
 
+	var _mthadley$thenews$User$User = F6(
+		function (a, b, c, d, e, f) {
+			return {about: a, created: b, delay: c, id: d, karma: e, submitted: f};
+		});
+	var _mthadley$thenews$User$decode = A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'submitted',
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'karma',
+			_elm_lang$core$Json_Decode$int,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'delay',
+					_elm_lang$core$Json_Decode$int,
+					0,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'created',
+						_elm_lang$core$Json_Decode$int,
+						A3(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+							'about',
+							_elm_lang$core$Json_Decode$string,
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_mthadley$thenews$User$User)))))));
+
 	var _mthadley$thenews$Api$send = _elm_lang$core$Task$attempt;
 	var _mthadley$thenews$Api$categoryEndpoint = function (category) {
 		var _p0 = category;
@@ -10554,6 +10580,14 @@
 			},
 			_mthadley$thenews$Api$requestCategoryIds(category));
 	};
+	var _mthadley$thenews$Api$requestUser = function (id) {
+		return _elm_lang$http$Http$toTask(
+			A2(
+				_elm_lang$http$Http$get,
+				_mthadley$thenews$Api$requestUrl(
+					A2(_elm_lang$core$Basics_ops['++'], 'user/', id)),
+				_mthadley$thenews$User$decode));
+	};
 	var _mthadley$thenews$Api$Top = {ctor: 'Top'};
 	var _mthadley$thenews$Api$Show = {ctor: 'Show'};
 	var _mthadley$thenews$Api$New = {ctor: 'New'};
@@ -10582,16 +10616,21 @@
 					}
 				case 'NotFound':
 					return '404';
-				default:
+				case 'ViewItem':
 					return A2(
 						_elm_lang$core$Basics_ops['++'],
 						'item/',
 						_elm_lang$core$Basics$toString(_p0._0));
+				default:
+					return A2(_elm_lang$core$Basics_ops['++'], 'user/', _p0._0);
 			}
 		}();
 		return A2(_elm_lang$core$Basics_ops['++'], '#', path);
 	};
 	var _mthadley$thenews$Router$NotFound = {ctor: 'NotFound'};
+	var _mthadley$thenews$Router$ViewUser = function (a) {
+		return {ctor: 'ViewUser', _0: a};
+	};
 	var _mthadley$thenews$Router$ViewItem = function (a) {
 		return {ctor: 'ViewItem', _0: a};
 	};
@@ -10650,7 +10689,17 @@
 												_evancz$url_parser$UrlParser_ops['</>'],
 												_evancz$url_parser$UrlParser$s('item'),
 												_evancz$url_parser$UrlParser$int)),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_evancz$url_parser$UrlParser$map,
+												_mthadley$thenews$Router$ViewUser,
+												A2(
+													_evancz$url_parser$UrlParser_ops['</>'],
+													_evancz$url_parser$UrlParser$s('user'),
+													_evancz$url_parser$UrlParser$string)),
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -10728,7 +10777,10 @@
 	}();
 	var _mthadley$thenews$ItemEntry$view = F2(
 		function (showText, item) {
-			var textContent = showText ? _mthadley$thenews$Util$viewHtmlContent(item.text) : _mthadley$thenews$Util$empty;
+			var textContent = showText ? A2(
+				_elm_lang$core$Maybe$withDefault,
+				_mthadley$thenews$Util$empty,
+				A2(_elm_lang$core$Maybe$map, _mthadley$thenews$Util$viewHtmlContent, item.text)) : _mthadley$thenews$Util$empty;
 			return A2(
 				_elm_lang$html$Html$article,
 				{
@@ -10764,7 +10816,9 @@
 											ctor: '_Tuple3',
 											_0: 'By ',
 											_1: _elm_lang$core$Maybe$Just(item.by),
-											_2: _elm_lang$core$Maybe$Nothing
+											_2: _elm_lang$core$Maybe$Just(
+												_mthadley$thenews$Router$reverse(
+													_mthadley$thenews$Router$ViewUser(item.by)))
 										},
 										_1: {
 											ctor: '::',
@@ -10864,15 +10918,15 @@
 	var _mthadley$thenews$CategoryPage$RouteChange = function (a) {
 		return {ctor: 'RouteChange', _0: a};
 	};
-	var _mthadley$thenews$CategoryPage$RecieveItems = F2(
+	var _mthadley$thenews$CategoryPage$ReceiveItems = F2(
 		function (a, b) {
-			return {ctor: 'RecieveItems', _0: a, _1: b};
+			return {ctor: 'ReceiveItems', _0: a, _1: b};
 		});
 	var _mthadley$thenews$CategoryPage$fetchItems = function (category) {
 		return function (_p2) {
 			return A2(
 				_mthadley$thenews$Api$send,
-				_mthadley$thenews$CategoryPage$RecieveItems(category),
+				_mthadley$thenews$CategoryPage$ReceiveItems(category),
 				_mthadley$thenews$Api$requestCategory(_p2));
 		}(category);
 	};
@@ -10915,7 +10969,7 @@
 	var _mthadley$thenews$CategoryPage$update = F2(
 		function (msg, model) {
 			var _p6 = msg;
-			if (_p6.ctor === 'RecieveItems') {
+			if (_p6.ctor === 'ReceiveItems') {
 				var newItems = A3(
 					_mthadley$thenews$CategoryPage$insertItems,
 					_p6._0,
@@ -10998,7 +11052,7 @@
 					{loading: loading});
 			});
 	};
-	var _mthadley$thenews$ItemPage$defaultId = function (_p0) {
+	var _mthadley$thenews$ItemPage$getId = function (_p0) {
 		return A2(
 			_mthadley$thenews$RemoteData$withDefault,
 			-1,
@@ -11043,15 +11097,15 @@
 	var _mthadley$thenews$ItemPage$RouteChange = function (a) {
 		return {ctor: 'RouteChange', _0: a};
 	};
-	var _mthadley$thenews$ItemPage$RecieveComments = F2(
+	var _mthadley$thenews$ItemPage$ReceiveComments = F2(
 		function (a, b) {
-			return {ctor: 'RecieveComments', _0: a, _1: b};
+			return {ctor: 'ReceiveComments', _0: a, _1: b};
 		});
 	var _mthadley$thenews$ItemPage$fetchComments = F2(
 		function (count, item) {
 			return A2(
 				_mthadley$thenews$Api$send,
-				_mthadley$thenews$ItemPage$RecieveComments(item.id),
+				_mthadley$thenews$ItemPage$ReceiveComments(item.id),
 				_mthadley$thenews$Api$requestItems(
 					A2(
 						_elm_lang$core$List$take,
@@ -11101,13 +11155,13 @@
 			_1: cmd
 		};
 	};
-	var _mthadley$thenews$ItemPage$RecieveItem = function (a) {
-		return {ctor: 'RecieveItem', _0: a};
+	var _mthadley$thenews$ItemPage$ReceiveItem = function (a) {
+		return {ctor: 'ReceiveItem', _0: a};
 	};
 	var _mthadley$thenews$ItemPage$fetchItem = function (_p4) {
 		return A2(
 			_mthadley$thenews$Api$send,
-			_mthadley$thenews$ItemPage$RecieveItem,
+			_mthadley$thenews$ItemPage$ReceiveItem,
 			_mthadley$thenews$Api$requestItem(_p4));
 	};
 	var _mthadley$thenews$ItemPage$init = function (route) {
@@ -11142,8 +11196,8 @@
 					var _p8 = _p7._0;
 					return _elm_lang$core$Native_Utils.eq(
 						_p8,
-						_mthadley$thenews$ItemPage$defaultId(model.item)) ? _mthadley$thenews$ItemPage$fetchItemComment(model) : A2(_mthadley$thenews$ItemPage$fetchNestedComment, _p8, model);
-				case 'RecieveItem':
+						_mthadley$thenews$ItemPage$getId(model.item)) ? _mthadley$thenews$ItemPage$fetchItemComment(model) : A2(_mthadley$thenews$ItemPage$fetchNestedComment, _p8, model);
+				case 'ReceiveItem':
 					var _p9 = _p7._0;
 					var cmd = A2(
 						_elm_lang$core$Result$withDefault,
@@ -11161,11 +11215,11 @@
 							}),
 						_1: cmd
 					};
-				case 'RecieveComments':
+				case 'ReceiveComments':
 					var _p10 = _p7._0;
 					var delta = _elm_lang$core$Native_Utils.eq(
 						_p10,
-						_mthadley$thenews$ItemPage$defaultId(model.item)) ? _mthadley$thenews$ItemPage$pageSize : 0;
+						_mthadley$thenews$ItemPage$getId(model.item)) ? _mthadley$thenews$ItemPage$pageSize : 0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -11195,7 +11249,7 @@
 						var _p12 = _p11._0;
 						return (_mthadley$thenews$RemoteData$isDone(model.item) && _elm_lang$core$Native_Utils.eq(
 							_p12,
-							_mthadley$thenews$ItemPage$defaultId(model.item))) ? A2(
+							_mthadley$thenews$ItemPage$getId(model.item))) ? A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
 							{ctor: '[]'}) : {
@@ -11314,7 +11368,10 @@
 						}),
 					_1: {
 						ctor: '::',
-						_0: _mthadley$thenews$Util$viewHtmlContent(_p15.text),
+						_0: A2(
+							_elm_lang$core$Maybe$withDefault,
+							_mthadley$thenews$Util$empty,
+							A2(_elm_lang$core$Maybe$map, _mthadley$thenews$Util$viewHtmlContent, _p15.text)),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -11539,11 +11596,211 @@
 			}
 		});
 
-	var _mthadley$thenews$App$subscriptions = _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none);
-	var _mthadley$thenews$App$Model = F3(
-		function (a, b, c) {
-			return {currentRoute: a, itemPage: b, categoryPage: c};
+	var _mthadley$thenews$UserPage$getId = function (_p0) {
+		return A2(
+			_mthadley$thenews$RemoteData$withDefault,
+			'',
+			A2(
+				_mthadley$thenews$RemoteData$map,
+				function (_) {
+					return _.id;
+				},
+				_p0));
+	};
+	var _mthadley$thenews$UserPage$viewSubmissions = function (items) {
+		var content = function () {
+			var _p1 = items;
+			switch (_p1.ctor) {
+				case 'Done':
+					return A2(
+						_elm_lang$core$List$map,
+						_mthadley$thenews$ItemEntry$view(true),
+						_p1._0);
+				case 'Loading':
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Loading...'),
+						_1: {ctor: '[]'}
+					};
+				default:
+					return {
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('There doesn\'t seem to be anything here.'),
+						_1: {ctor: '[]'}
+					};
+			}
+		}();
+		return A2(
+			_elm_lang$html$Html$section,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h2,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Recent Submissions'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						content),
+					_1: {ctor: '[]'}
+				}
+			});
+	};
+	var _mthadley$thenews$UserPage$viewUser = function (user) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h3,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(user.id),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _mthadley$thenews$Util$viewHtmlContent(user.about),
+					_1: {ctor: '[]'}
+				}
+			});
+	};
+	var _mthadley$thenews$UserPage$view = function (model) {
+		var _p2 = model.user;
+		switch (_p2.ctor) {
+			case 'Done':
+				return A2(
+					_elm_lang$html$Html$section,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _mthadley$thenews$UserPage$viewUser(_p2._0),
+						_1: {
+							ctor: '::',
+							_0: _mthadley$thenews$UserPage$viewSubmissions(model.items),
+							_1: {ctor: '[]'}
+						}
+					});
+			case 'Loading':
+				return _elm_lang$html$Html$text('Loading...');
+			default:
+				return _elm_lang$html$Html$text('There doesn\'t seem to be anything here.');
+		}
+	};
+	var _mthadley$thenews$UserPage$Model = F2(
+		function (a, b) {
+			return {user: a, items: b};
 		});
+	var _mthadley$thenews$UserPage$ReceiveItems = function (a) {
+		return {ctor: 'ReceiveItems', _0: a};
+	};
+	var _mthadley$thenews$UserPage$fetchItems = function (_p3) {
+		return A2(
+			_mthadley$thenews$Api$send,
+			_mthadley$thenews$UserPage$ReceiveItems,
+			_mthadley$thenews$Api$requestItems(_p3));
+	};
+	var _mthadley$thenews$UserPage$ReceiveUser = function (a) {
+		return {ctor: 'ReceiveUser', _0: a};
+	};
+	var _mthadley$thenews$UserPage$fetchUser = function (_p4) {
+		return A2(
+			_mthadley$thenews$Api$send,
+			_mthadley$thenews$UserPage$ReceiveUser,
+			_mthadley$thenews$Api$requestUser(_p4));
+	};
+	var _mthadley$thenews$UserPage$updateRoute = F2(
+		function (model, route) {
+			var _p5 = route;
+			if (_p5.ctor === 'ViewUser') {
+				var _p6 = _p5._0;
+				return (_mthadley$thenews$RemoteData$isDone(model.user) && _elm_lang$core$Native_Utils.eq(
+					_p6,
+					_mthadley$thenews$UserPage$getId(model.user))) ? A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'}) : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{user: _mthadley$thenews$RemoteData$Loading}),
+					_1: _mthadley$thenews$UserPage$fetchUser(_p6)
+				};
+			} else {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+			}
+		});
+	var _mthadley$thenews$UserPage$init = function (route) {
+		return A2(
+			_mthadley$thenews$UserPage$updateRoute,
+			A2(_mthadley$thenews$UserPage$Model, _mthadley$thenews$RemoteData$NotRequested, _mthadley$thenews$RemoteData$NotRequested),
+			route);
+	};
+	var _mthadley$thenews$UserPage$update = F2(
+		function (msg, model) {
+			var _p7 = msg;
+			switch (_p7.ctor) {
+				case 'RouteChange':
+					return A2(_mthadley$thenews$UserPage$updateRoute, model, _p7._0);
+				case 'ReceiveUser':
+					var _p8 = _p7._0;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								user: _mthadley$thenews$RemoteData$fromResult(_p8),
+								items: _mthadley$thenews$RemoteData$Loading
+							}),
+						_1: _mthadley$thenews$UserPage$fetchItems(
+							A2(
+								_elm_lang$core$List$take,
+								10,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									{ctor: '[]'},
+									A2(
+										_elm_lang$core$Result$map,
+										function (_) {
+											return _.submitted;
+										},
+										_p8))))
+					};
+				default:
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								items: _mthadley$thenews$RemoteData$fromResult(_p7._0)
+							}),
+						{ctor: '[]'});
+			}
+		});
+	var _mthadley$thenews$UserPage$RouteChange = function (a) {
+		return {ctor: 'RouteChange', _0: a};
+	};
+
+	var _mthadley$thenews$App$subscriptions = _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none);
+	var _mthadley$thenews$App$Model = F4(
+		function (a, b, c, d) {
+			return {currentRoute: a, itemPage: b, categoryPage: c, userPage: d};
+		});
+	var _mthadley$thenews$App$UserPageMsg = function (a) {
+		return {ctor: 'UserPageMsg', _0: a};
+	};
 	var _mthadley$thenews$App$ItemPageMsg = function (a) {
 		return {ctor: 'ItemPageMsg', _0: a};
 	};
@@ -11558,23 +11815,30 @@
 		var _p1 = _mthadley$thenews$CategoryPage$init(route);
 		var categoryPage = _p1._0;
 		var categoryPageCmd = _p1._1;
+		var _p2 = _mthadley$thenews$UserPage$init(route);
+		var userPage = _p2._0;
+		var userPageCmd = _p2._1;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
-			{currentRoute: route, itemPage: itemPage, categoryPage: categoryPage},
+			{currentRoute: route, itemPage: itemPage, categoryPage: categoryPage, userPage: userPage},
 			{
 				ctor: '::',
 				_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, itemPageCmd),
 				_1: {
 					ctor: '::',
 					_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, categoryPageCmd),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$UserPageMsg, userPageCmd),
+						_1: {ctor: '[]'}
+					}
 				}
 			});
 	};
 	var _mthadley$thenews$App$viewMain = function (model) {
 		var content = function () {
-			var _p2 = model.currentRoute;
-			switch (_p2.ctor) {
+			var _p3 = model.currentRoute;
+			switch (_p3.ctor) {
 				case 'NotFound':
 					return _mthadley$thenews$NotFoundPage$view;
 				case 'View':
@@ -11582,11 +11846,16 @@
 						_elm_lang$html$Html$map,
 						_mthadley$thenews$App$CategoryPageMsg,
 						_mthadley$thenews$CategoryPage$view(model.categoryPage));
-				default:
+				case 'ViewItem':
 					return A2(
 						_elm_lang$html$Html$map,
 						_mthadley$thenews$App$ItemPageMsg,
 						_mthadley$thenews$ItemPage$view(model.itemPage));
+				default:
+					return A2(
+						_elm_lang$html$Html$map,
+						_mthadley$thenews$App$UserPageMsg,
+						_mthadley$thenews$UserPage$view(model.userPage));
 			}
 		}();
 		return A2(
@@ -11622,40 +11891,50 @@
 	};
 	var _mthadley$thenews$App$update = F2(
 		function (msg, model) {
-			var _p3 = msg;
-			switch (_p3.ctor) {
+			var _p4 = msg;
+			switch (_p4.ctor) {
 				case 'RouteChange':
-					var _p6 = _p3._0;
-					var _p4 = A2(
-						_mthadley$thenews$CategoryPage$update,
-						_mthadley$thenews$CategoryPage$RouteChange(_p6),
-						model.categoryPage);
-					var categoryPage = _p4._0;
-					var categoryPageCmd = _p4._1;
+					var _p8 = _p4._0;
 					var _p5 = A2(
+						_mthadley$thenews$UserPage$update,
+						_mthadley$thenews$UserPage$RouteChange(_p8),
+						model.userPage);
+					var userPage = _p5._0;
+					var userPageCmd = _p5._1;
+					var _p6 = A2(
+						_mthadley$thenews$CategoryPage$update,
+						_mthadley$thenews$CategoryPage$RouteChange(_p8),
+						model.categoryPage);
+					var categoryPage = _p6._0;
+					var categoryPageCmd = _p6._1;
+					var _p7 = A2(
 						_mthadley$thenews$ItemPage$update,
-						_mthadley$thenews$ItemPage$RouteChange(_p6),
+						_mthadley$thenews$ItemPage$RouteChange(_p8),
 						model.itemPage);
-					var itemPage = _p5._0;
-					var itemPageCmd = _p5._1;
+					var itemPage = _p7._0;
+					var itemPageCmd = _p7._1;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{currentRoute: _p6, categoryPage: categoryPage, itemPage: itemPage}),
+							{currentRoute: _p8, categoryPage: categoryPage, itemPage: itemPage, userPage: userPage}),
 						{
 							ctor: '::',
 							_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, categoryPageCmd),
 							_1: {
 								ctor: '::',
 								_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, itemPageCmd),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$UserPageMsg, userPageCmd),
+									_1: {ctor: '[]'}
+								}
 							}
 						});
 				case 'ItemPageMsg':
-					var _p7 = A2(_mthadley$thenews$ItemPage$update, _p3._0, model.itemPage);
-					var newModel = _p7._0;
-					var cmd = _p7._1;
+					var _p9 = A2(_mthadley$thenews$ItemPage$update, _p4._0, model.itemPage);
+					var newModel = _p9._0;
+					var cmd = _p9._1;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -11663,16 +11942,27 @@
 							{itemPage: newModel}),
 						_1: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, cmd)
 					};
-				default:
-					var _p8 = A2(_mthadley$thenews$CategoryPage$update, _p3._0, model.categoryPage);
-					var newModel = _p8._0;
-					var cmd = _p8._1;
+				case 'CategoryPageMsg':
+					var _p10 = A2(_mthadley$thenews$CategoryPage$update, _p4._0, model.categoryPage);
+					var newModel = _p10._0;
+					var cmd = _p10._1;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{categoryPage: newModel}),
 						_1: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, cmd)
+					};
+				default:
+					var _p11 = A2(_mthadley$thenews$UserPage$update, _p4._0, model.userPage);
+					var newModel = _p11._0;
+					var cmd = _p11._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{userPage: newModel}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$UserPageMsg, cmd)
 					};
 			}
 		});
