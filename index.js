@@ -10627,6 +10627,10 @@
 		}();
 		return A2(_elm_lang$core$Basics_ops['++'], '#', path);
 	};
+	var _mthadley$thenews$Router$linkTo = function (_p1) {
+		return _elm_lang$html$Html_Attributes$href(
+			_mthadley$thenews$Router$reverse(_p1));
+	};
 	var _mthadley$thenews$Router$NotFound = {ctor: 'NotFound'};
 	var _mthadley$thenews$Router$ViewUser = function (a) {
 		return {ctor: 'ViewUser', _0: a};
@@ -10708,11 +10712,11 @@
 				}
 			}
 		});
-	var _mthadley$thenews$Router$parseLocation = function (_p1) {
+	var _mthadley$thenews$Router$parseLocation = function (_p2) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			_mthadley$thenews$Router$NotFound,
-			A2(_evancz$url_parser$UrlParser$parseHash, _mthadley$thenews$Router$parseRoute, _p1));
+			A2(_evancz$url_parser$UrlParser$parseHash, _mthadley$thenews$Router$parseRoute, _p2));
 	};
 
 	var _mthadley$thenews$ItemEntry$spanOrLink = F2(
@@ -11001,7 +11005,19 @@
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(_mthadley$thenews$Header$splash),
+					_0: A2(
+						_elm_lang$html$Html$a,
+						{
+							ctor: '::',
+							_0: _mthadley$thenews$Router$linkTo(
+								_mthadley$thenews$Router$View(_mthadley$thenews$Api$Top)),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(_mthadley$thenews$Header$splash),
+							_1: {ctor: '[]'}
+						}),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -11344,9 +11360,8 @@
 								_elm_lang$html$Html$a,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$href(
-										_mthadley$thenews$Router$reverse(
-											_mthadley$thenews$Router$ViewUser(_p15.by))),
+									_0: _mthadley$thenews$Router$linkTo(
+										_mthadley$thenews$Router$ViewUser(_p15.by)),
 									_1: {ctor: '[]'}
 								},
 								{
@@ -11551,9 +11566,8 @@
 						_elm_lang$html$Html$a,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$href(
-								_mthadley$thenews$Router$reverse(
-									_mthadley$thenews$Router$View(_p3))),
+							_0: _mthadley$thenews$Router$linkTo(
+								_mthadley$thenews$Router$View(_p3)),
 							_1: {ctor: '[]'}
 						},
 						{
