@@ -10794,6 +10794,21 @@
 				});
 		});
 
+	var _mthadley$thenews$CategoryPage$getData = function (category) {
+		return function (_p0) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				_mthadley$thenews$RemoteData$NotRequested,
+				A2(
+					_elm_lang$core$Dict$get,
+					_mthadley$thenews$Api$stringId(category),
+					_p0));
+		};
+	};
+	var _mthadley$thenews$CategoryPage$insertItems = function (category) {
+		return _elm_lang$core$Dict$insert(
+			_mthadley$thenews$Api$stringId(category));
+	};
 	var _mthadley$thenews$CategoryPage$viewCategoryItem = F2(
 		function (rank, item) {
 			return A2(
@@ -10828,20 +10843,94 @@
 					}
 				});
 		});
-	var _mthadley$thenews$CategoryPage$view = function (items) {
-		var _p0 = items;
-		switch (_p0.ctor) {
+	var _mthadley$thenews$CategoryPage$view = function (model) {
+		var _p1 = A2(_mthadley$thenews$CategoryPage$getData, model.category, model.items);
+		switch (_p1.ctor) {
 			case 'Done':
 				return A2(
 					_elm_lang$html$Html$section,
 					{ctor: '[]'},
-					A2(_elm_lang$core$List$indexedMap, _mthadley$thenews$CategoryPage$viewCategoryItem, _p0._0));
+					A2(_elm_lang$core$List$indexedMap, _mthadley$thenews$CategoryPage$viewCategoryItem, _p1._0));
 			case 'Loading':
 				return _elm_lang$html$Html$text('Loading...');
 			default:
 				return _elm_lang$html$Html$text('There doesn\'t seem to be anything here.');
 		}
 	};
+	var _mthadley$thenews$CategoryPage$Model = F2(
+		function (a, b) {
+			return {category: a, items: b};
+		});
+	var _mthadley$thenews$CategoryPage$RouteChange = function (a) {
+		return {ctor: 'RouteChange', _0: a};
+	};
+	var _mthadley$thenews$CategoryPage$RecieveItems = F2(
+		function (a, b) {
+			return {ctor: 'RecieveItems', _0: a, _1: b};
+		});
+	var _mthadley$thenews$CategoryPage$fetchItems = function (category) {
+		return function (_p2) {
+			return A2(
+				_mthadley$thenews$Api$send,
+				_mthadley$thenews$CategoryPage$RecieveItems(category),
+				_mthadley$thenews$Api$requestCategory(_p2));
+		}(category);
+	};
+	var _mthadley$thenews$CategoryPage$updateRoute = F2(
+		function (model, route) {
+			var _p3 = route;
+			if (_p3.ctor === 'View') {
+				var _p5 = _p3._0;
+				var _p4 = _mthadley$thenews$RemoteData$isDone(
+					A2(_mthadley$thenews$CategoryPage$getData, _p5, model.items)) ? A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model.items,
+					{ctor: '[]'}) : {
+					ctor: '_Tuple2',
+					_0: A3(_mthadley$thenews$CategoryPage$insertItems, _p5, _mthadley$thenews$RemoteData$Loading, model.items),
+					_1: _mthadley$thenews$CategoryPage$fetchItems(_p5)
+				};
+				var items = _p4._0;
+				var cmd = _p4._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{items: items, category: _p5}),
+					_1: cmd
+				};
+			} else {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+			}
+		});
+	var _mthadley$thenews$CategoryPage$init = function (route) {
+		return A2(
+			_mthadley$thenews$CategoryPage$updateRoute,
+			A2(_mthadley$thenews$CategoryPage$Model, _mthadley$thenews$Api$Best, _elm_lang$core$Dict$empty),
+			route);
+	};
+	var _mthadley$thenews$CategoryPage$update = F2(
+		function (msg, model) {
+			var _p6 = msg;
+			if (_p6.ctor === 'RecieveItems') {
+				var newItems = A3(
+					_mthadley$thenews$CategoryPage$insertItems,
+					_p6._0,
+					_mthadley$thenews$RemoteData$fromResult(_p6._1),
+					model.items);
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{items: newItems}),
+					{ctor: '[]'});
+			} else {
+				return A2(_mthadley$thenews$CategoryPage$updateRoute, model, _p6._0);
+			}
+		});
 
 	var _mthadley$thenews$Header$splash = '\n ________       _  __\n/_  __/ /  ___ / |/ /__ _    _____\n / / / _ \\/ -_)    / -_) |/|/ (_-<\n/_/ /_//_/\\__/_/|_/\\__/|__,__/___/\n';
 	var _mthadley$thenews$Header$view = A2(
@@ -10884,7 +10973,7 @@
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('HN!'),
+									_0: _elm_lang$html$Html$text('YC!'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -11451,37 +11540,48 @@
 		});
 
 	var _mthadley$thenews$App$subscriptions = _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none);
-	var _mthadley$thenews$App$getData = function (category) {
-		return function (_p0) {
-			return A2(
-				_elm_lang$core$Maybe$withDefault,
-				_mthadley$thenews$RemoteData$NotRequested,
-				A2(
-					_elm_lang$core$Dict$get,
-					_mthadley$thenews$Api$stringId(category),
-					_p0));
-		};
-	};
-	var _mthadley$thenews$App$insertItems = function (category) {
-		return _elm_lang$core$Dict$insert(
-			_mthadley$thenews$Api$stringId(category));
-	};
 	var _mthadley$thenews$App$Model = F3(
 		function (a, b, c) {
-			return {currentRoute: a, items: b, itemPage: c};
+			return {currentRoute: a, itemPage: b, categoryPage: c};
 		});
 	var _mthadley$thenews$App$ItemPageMsg = function (a) {
 		return {ctor: 'ItemPageMsg', _0: a};
 	};
+	var _mthadley$thenews$App$CategoryPageMsg = function (a) {
+		return {ctor: 'CategoryPageMsg', _0: a};
+	};
+	var _mthadley$thenews$App$init = function (location) {
+		var route = _mthadley$thenews$Router$parseLocation(location);
+		var _p0 = _mthadley$thenews$ItemPage$init(route);
+		var itemPage = _p0._0;
+		var itemPageCmd = _p0._1;
+		var _p1 = _mthadley$thenews$CategoryPage$init(route);
+		var categoryPage = _p1._0;
+		var categoryPageCmd = _p1._1;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			{currentRoute: route, itemPage: itemPage, categoryPage: categoryPage},
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, itemPageCmd),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, categoryPageCmd),
+					_1: {ctor: '[]'}
+				}
+			});
+	};
 	var _mthadley$thenews$App$viewMain = function (model) {
 		var content = function () {
-			var _p1 = model.currentRoute;
-			switch (_p1.ctor) {
+			var _p2 = model.currentRoute;
+			switch (_p2.ctor) {
 				case 'NotFound':
 					return _mthadley$thenews$NotFoundPage$view;
 				case 'View':
-					return _mthadley$thenews$CategoryPage$view(
-						A2(_mthadley$thenews$App$getData, _p1._0, model.items));
+					return A2(
+						_elm_lang$html$Html$map,
+						_mthadley$thenews$App$CategoryPageMsg,
+						_mthadley$thenews$CategoryPage$view(model.categoryPage));
 				default:
 					return A2(
 						_elm_lang$html$Html$map,
@@ -11520,108 +11620,42 @@
 				}
 			});
 	};
-	var _mthadley$thenews$App$RouteChange = function (a) {
-		return {ctor: 'RouteChange', _0: a};
-	};
-	var _mthadley$thenews$App$RecieveItems = F2(
-		function (a, b) {
-			return {ctor: 'RecieveItems', _0: a, _1: b};
-		});
-	var _mthadley$thenews$App$fetchItems = function (category) {
-		return function (_p2) {
-			return A2(
-				_mthadley$thenews$Api$send,
-				_mthadley$thenews$App$RecieveItems(category),
-				_mthadley$thenews$Api$requestCategory(_p2));
-		}(category);
-	};
-	var _mthadley$thenews$App$updateRoute = F2(
-		function (items, route) {
-			var _p3 = route;
-			if (_p3.ctor === 'View') {
-				var _p4 = _p3._0;
-				return _mthadley$thenews$RemoteData$isDone(
-					A2(_mthadley$thenews$App$getData, _p4, items)) ? A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					items,
-					{ctor: '[]'}) : {
-					ctor: '_Tuple2',
-					_0: A3(_mthadley$thenews$App$insertItems, _p4, _mthadley$thenews$RemoteData$Loading, items),
-					_1: _mthadley$thenews$App$fetchItems(_p4)
-				};
-			} else {
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					items,
-					{ctor: '[]'});
-			}
-		});
-	var _mthadley$thenews$App$init = function (location) {
-		var route = _mthadley$thenews$Router$parseLocation(location);
-		var _p5 = A2(_mthadley$thenews$App$updateRoute, _elm_lang$core$Dict$empty, route);
-		var items = _p5._0;
-		var cmd = _p5._1;
-		var _p6 = _mthadley$thenews$ItemPage$init(route);
-		var itemPage = _p6._0;
-		var itemPageCmd = _p6._1;
-		return A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			{currentRoute: route, items: items, itemPage: itemPage},
-			{
-				ctor: '::',
-				_0: cmd,
-				_1: {
-					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, itemPageCmd),
-					_1: {ctor: '[]'}
-				}
-			});
-	};
 	var _mthadley$thenews$App$update = F2(
 		function (msg, model) {
-			var _p7 = msg;
-			switch (_p7.ctor) {
-				case 'RecieveItems':
-					var newItems = A3(
-						_mthadley$thenews$App$insertItems,
-						_p7._0,
-						_mthadley$thenews$RemoteData$fromResult(_p7._1),
-						model.items);
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{items: newItems}),
-						{ctor: '[]'});
+			var _p3 = msg;
+			switch (_p3.ctor) {
 				case 'RouteChange':
-					var _p10 = _p7._0;
-					var _p8 = A2(
+					var _p6 = _p3._0;
+					var _p4 = A2(
+						_mthadley$thenews$CategoryPage$update,
+						_mthadley$thenews$CategoryPage$RouteChange(_p6),
+						model.categoryPage);
+					var categoryPage = _p4._0;
+					var categoryPageCmd = _p4._1;
+					var _p5 = A2(
 						_mthadley$thenews$ItemPage$update,
-						_mthadley$thenews$ItemPage$RouteChange(_p10),
+						_mthadley$thenews$ItemPage$RouteChange(_p6),
 						model.itemPage);
-					var itemPage = _p8._0;
-					var itemPageCmd = _p8._1;
-					var _p9 = A2(_mthadley$thenews$App$updateRoute, model.items, _p10);
-					var newItems = _p9._0;
-					var cmd = _p9._1;
+					var itemPage = _p5._0;
+					var itemPageCmd = _p5._1;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{currentRoute: _p10, items: newItems, itemPage: itemPage}),
+							{currentRoute: _p6, categoryPage: categoryPage, itemPage: itemPage}),
 						{
 							ctor: '::',
-							_0: cmd,
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, categoryPageCmd),
 							_1: {
 								ctor: '::',
 								_0: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, itemPageCmd),
 								_1: {ctor: '[]'}
 							}
 						});
-				default:
-					var _p11 = A2(_mthadley$thenews$ItemPage$update, _p7._0, model.itemPage);
-					var newModel = _p11._0;
-					var cmd = _p11._1;
+				case 'ItemPageMsg':
+					var _p7 = A2(_mthadley$thenews$ItemPage$update, _p3._0, model.itemPage);
+					var newModel = _p7._0;
+					var cmd = _p7._1;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -11629,8 +11663,22 @@
 							{itemPage: newModel}),
 						_1: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$ItemPageMsg, cmd)
 					};
+				default:
+					var _p8 = A2(_mthadley$thenews$CategoryPage$update, _p3._0, model.categoryPage);
+					var newModel = _p8._0;
+					var cmd = _p8._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{categoryPage: newModel}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _mthadley$thenews$App$CategoryPageMsg, cmd)
+					};
 			}
 		});
+	var _mthadley$thenews$App$RouteChange = function (a) {
+		return {ctor: 'RouteChange', _0: a};
+	};
 
 	var _mthadley$thenews$Main$main = A2(
 		_elm_lang$navigation$Navigation$program,
