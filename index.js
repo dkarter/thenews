@@ -10517,7 +10517,7 @@
 						'created',
 						_elm_lang$core$Json_Decode$int,
 						A3(
-							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+							_mthadley$thenews$Util$optionalMaybe,
 							'about',
 							_elm_lang$core$Json_Decode$string,
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_mthadley$thenews$User$User)))))));
@@ -10753,34 +10753,71 @@
 				return A2(_elm_lang$core$Maybe$withDefault, 'Untitled', item.title);
 		}
 	};
-	var _mthadley$thenews$ItemEntry$viewDetails = function () {
-		var detail = function (_p1) {
-			var _p2 = _p1;
+	var _mthadley$thenews$ItemEntry$getDetail = F2(
+		function (item, type_) {
+			var _p1 = type_;
+			switch (_p1.ctor) {
+				case 'By':
+					return {
+						ctor: '_Tuple3',
+						_0: 'By ',
+						_1: _elm_lang$core$Maybe$Just(item.by),
+						_2: _elm_lang$core$Maybe$Just(
+							_mthadley$thenews$Router$reverse(
+								_mthadley$thenews$Router$ViewUser(item.by)))
+					};
+				case 'Score':
+					return {
+						ctor: '_Tuple3',
+						_0: 'Score: ',
+						_1: _mthadley$thenews$Util$maybeToString(item.score),
+						_2: _elm_lang$core$Maybe$Nothing
+					};
+				default:
+					return {
+						ctor: '_Tuple3',
+						_0: 'Comments: ',
+						_1: _mthadley$thenews$Util$maybeToString(item.descendants),
+						_2: _elm_lang$core$Maybe$Just(
+							_mthadley$thenews$Router$reverse(
+								_mthadley$thenews$Router$ViewItem(item.id)))
+					};
+			}
+		});
+	var _mthadley$thenews$ItemEntry$viewDetails = function (item) {
+		var detail = function (_p2) {
+			var _p3 = _p2;
 			return A2(
 				_elm_lang$core$Maybe$map,
-				function (_p3) {
+				function (_p4) {
 					return A2(
 						_mthadley$thenews$ItemEntry$spanOrLink,
-						_p2._2,
+						_p3._2,
 						A2(
 							F2(
 								function (x, y) {
 									return A2(_elm_lang$core$Basics_ops['++'], x, y);
 								}),
-							_p2._0,
-							_p3));
+							_p3._0,
+							_p4));
 				},
-				_p2._1);
+				_p3._1);
 		};
-		return function (_p4) {
+		return function (_p5) {
 			return A2(
 				_elm_lang$core$List$intersperse,
 				_elm_lang$html$Html$text(' • '),
-				A2(_elm_lang$core$List$filterMap, detail, _p4));
+				A2(
+					_elm_lang$core$List$filterMap,
+					function (_p6) {
+						return detail(
+							A2(_mthadley$thenews$ItemEntry$getDetail, item, _p6));
+					},
+					_p5));
 		};
-	}();
-	var _mthadley$thenews$ItemEntry$view = F2(
-		function (showText, item) {
+	};
+	var _mthadley$thenews$ItemEntry$view = F3(
+		function (showText, detailTypes, item) {
 			var textContent = showText ? A2(
 				_elm_lang$core$Maybe$withDefault,
 				_mthadley$thenews$Util$empty,
@@ -10813,44 +10850,15 @@
 							_0: A2(
 								_elm_lang$html$Html$footer,
 								{ctor: '[]'},
-								_mthadley$thenews$ItemEntry$viewDetails(
-									{
-										ctor: '::',
-										_0: {
-											ctor: '_Tuple3',
-											_0: 'By ',
-											_1: _elm_lang$core$Maybe$Just(item.by),
-											_2: _elm_lang$core$Maybe$Just(
-												_mthadley$thenews$Router$reverse(
-													_mthadley$thenews$Router$ViewUser(item.by)))
-										},
-										_1: {
-											ctor: '::',
-											_0: {
-												ctor: '_Tuple3',
-												_0: 'Score: ',
-												_1: _mthadley$thenews$Util$maybeToString(item.score),
-												_2: _elm_lang$core$Maybe$Nothing
-											},
-											_1: {
-												ctor: '::',
-												_0: {
-													ctor: '_Tuple3',
-													_0: 'Comments: ',
-													_1: _mthadley$thenews$Util$maybeToString(item.descendants),
-													_2: _elm_lang$core$Maybe$Just(
-														_mthadley$thenews$Router$reverse(
-															_mthadley$thenews$Router$ViewItem(item.id)))
-												},
-												_1: {ctor: '[]'}
-											}
-										}
-									})),
+								A2(_mthadley$thenews$ItemEntry$viewDetails, item, detailTypes)),
 							_1: {ctor: '[]'}
 						}
 					}
 				});
 		});
+	var _mthadley$thenews$ItemEntry$Comments = {ctor: 'Comments'};
+	var _mthadley$thenews$ItemEntry$Score = {ctor: 'Score'};
+	var _mthadley$thenews$ItemEntry$By = {ctor: 'By'};
 
 	var _mthadley$thenews$CategoryPage$getData = function (category) {
 		return function (_p0) {
@@ -10896,7 +10904,23 @@
 						}),
 					_1: {
 						ctor: '::',
-						_0: A2(_mthadley$thenews$ItemEntry$view, false, item),
+						_0: A3(
+							_mthadley$thenews$ItemEntry$view,
+							false,
+							{
+								ctor: '::',
+								_0: _mthadley$thenews$ItemEntry$By,
+								_1: {
+									ctor: '::',
+									_0: _mthadley$thenews$ItemEntry$Score,
+									_1: {
+										ctor: '::',
+										_0: _mthadley$thenews$ItemEntry$Comments,
+										_1: {ctor: '[]'}
+									}
+								}
+							},
+							item),
 						_1: {ctor: '[]'}
 					}
 				});
@@ -11504,7 +11528,19 @@
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: A2(_mthadley$thenews$ItemEntry$view, true, _p23),
+						_0: A3(
+							_mthadley$thenews$ItemEntry$view,
+							true,
+							{
+								ctor: '::',
+								_0: _mthadley$thenews$ItemEntry$By,
+								_1: {
+									ctor: '::',
+									_0: _mthadley$thenews$ItemEntry$Score,
+									_1: {ctor: '[]'}
+								}
+							},
+							_p23),
 						_1: {
 							ctor: '::',
 							_0: A2(_mthadley$thenews$ItemPage$viewCommentsContainer, model, _p23),
@@ -11641,7 +11677,18 @@
 				case 'Done':
 					return A2(
 						_elm_lang$core$List$map,
-						_mthadley$thenews$ItemEntry$view(true),
+						A2(
+							_mthadley$thenews$ItemEntry$view,
+							true,
+							{
+								ctor: '::',
+								_0: _mthadley$thenews$ItemEntry$Score,
+								_1: {
+									ctor: '::',
+									_0: _mthadley$thenews$ItemEntry$Comments,
+									_1: {ctor: '[]'}
+								}
+							}),
 						_p1._0);
 				case 'Loading':
 					return {
@@ -11696,7 +11743,10 @@
 					}),
 				_1: {
 					ctor: '::',
-					_0: _mthadley$thenews$Util$viewHtmlContent(user.about),
+					_0: A2(
+						_elm_lang$core$Maybe$withDefault,
+						_mthadley$thenews$Util$empty,
+						A2(_elm_lang$core$Maybe$map, _mthadley$thenews$Util$viewHtmlContent, user.about)),
 					_1: {ctor: '[]'}
 				}
 			});
