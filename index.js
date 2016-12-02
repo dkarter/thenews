@@ -11320,7 +11320,10 @@
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{items: newItems}),
+							{
+								items: newItems,
+								loadText: A2(_mthadley$thenews$LoadText$toggle, false, model.loadText)
+							}),
 						{ctor: '[]'});
 				case 'RouteChange':
 					return A2(_mthadley$thenews$Pages_Category$updateRoute, model, _p6._0);
