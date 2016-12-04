@@ -10926,6 +10926,13 @@
 			});
 	};
 
+	var _mthadley$thenews$DateFormat$paddedString = function (_p0) {
+		return A3(
+			_elm_lang$core$String$padLeft,
+			2,
+			_elm_lang$core$Native_Utils.chr('0'),
+			_elm_lang$core$Basics$toString(_p0));
+	};
 	var _mthadley$thenews$DateFormat$formatDate = function (date) {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -10950,12 +10957,12 @@
 								' at ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(
+									_mthadley$thenews$DateFormat$paddedString(
 										_elm_lang$core$Date$hour(date)),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
 										':',
-										_elm_lang$core$Basics$toString(
+										_mthadley$thenews$DateFormat$paddedString(
 											_elm_lang$core$Date$minute(date))))))))));
 	};
 	var _mthadley$thenews$DateFormat$format = function (time) {
